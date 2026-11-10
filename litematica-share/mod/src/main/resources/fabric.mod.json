@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "litematica_share",
+  "version": "${version}",
+  "name": "Litematica Share",
+  "description": "通过转发服务器，让多个玩家共享同一个 Litematica 投影及其放置信息。",
+  "authors": ["cy3807"],
+  "license": "MIT",
+  "environment": "client",
+  "accessWidener": "litematica_share.accesswidener",
+  "entrypoints": { "client": ["share.mod.ShareMod"] },
+  "depends": {
+    "fabricloader": ">=0.18.0",
+    "minecraft": "1.21.11",
+    "java": ">=21",
+    "fabric-api": "*",
+    "litematica": ">=0.26.14 <0.27.0"
+  }
+}

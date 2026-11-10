@@ -1,0 +1,56 @@
+plugins { id 'fabric-loom' version '1.17.20' }
+
+version = project.mod_version
+base { archivesName = 'litematica-share' }
+java { toolchain { languageVersion = JavaLanguageVersion.of(21) } }
+
+repositories {
+    exclusiveContent {
+        forRepository { maven { url = 'https://api.modrinth.com/maven' } }
+        filter { includeGroup 'maven.modrinth' }
+    }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings loom.officialMojangMappings()
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+    modImplementation "maven.modrinth:litematica:${project.litematica_version}"
+    modImplementation "maven.modrinth:malilib:${project.malilib_version}"
+    implementation 'cy:protocol:0.1.0'
+    include 'cy:protocol:0.1.0'
+}
+
+loom { accessWidenerPath = file('src/main/resources/litematica_share.accesswidener') }
+
+// 作者自己的构建: litematica-share/local.properties (不进 git) 里填 update_public_key=公钥(base64) 启用自动更新；
+// 不填 (开源源码/别人构建) 就是空，自动更新不启用。模组里永远不内置服务器地址。
+def localProps = new Properties()
+def localFile = rootProject.file('local.properties')
+if (localFile.exists()) localFile.withReader('UTF-8') { localProps.load(it) }
+def updatePublicKey = (localProps.getProperty('update_public_key') ?: '').trim()
+
+processResources {
+    inputs.property 'version', project.version
+    inputs.property 'update_public_key', updatePublicKey
+    filesMatching('fabric.mod.json') { expand 'version': project.version }
+    filesMatching('share_defaults.properties') { expand 'update_public_key': updatePublicKey }
+}
+
+// 客户端自动化测试: ./gradlew :mod:runClientGameTest (启动真实 1.21.11 客户端，需要本地转发服务，见 ShareClientTest)
+fabricApi {
+    configureTests {
+        createSourceSet = true
+        modId = 'litematica_share_test'
+        enableGameTests = false
+        enableClientGameTests = true
+        eula = true
+        clearRunDirectory = true
+    }
+}
+
+dependencies {
+    gametestImplementation sourceSets.main.output
+    gametestImplementation 'cy:protocol:0.1.0'
+}

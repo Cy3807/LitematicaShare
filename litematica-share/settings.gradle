@@ -1,0 +1,10 @@
+pluginManagement {
+    repositories {
+        maven { url = 'https://maven.fabricmc.net/' }
+        gradlePluginPortal()
+    }
+}
+rootProject.name = 'litematica-share'
+include 'mod'
+// 统一转发项目: 共用协议在 ../relay 的 protocol 模块里
+includeBuild('../relay')

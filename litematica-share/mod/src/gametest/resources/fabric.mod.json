@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "id": "litematica_share_test",
+  "version": "1.0.0",
+  "name": "Litematica Share Test",
+  "environment": "client",
+  "entrypoints": { "fabric-client-gametest": ["share.test.ShareClientTest"] },
+  "depends": { "litematica_share": "*" }
+}

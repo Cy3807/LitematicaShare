@@ -1,0 +1,17 @@
+plugins { id 'java'; id 'application' }
+java { toolchain { languageVersion = JavaLanguageVersion.of(21) } }
+repositories { mavenCentral() }
+dependencies {
+    implementation project(':protocol')
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+application { mainClass = 'share.relay.RelayServer' }
+test { useJUnitPlatform() }
+jar {
+    archiveFileName = 'minecraft-relay.jar'
+    manifest { attributes 'Main-Class': 'share.relay.RelayServer' }
+    from { project(':protocol').sourceSets.main.output }
+}
+// 面板服务器运行 Java 17，转发 jar 与共用协议必须按 17 编译 (不能用虚拟线程等 21 才有的 API)
+tasks.withType(JavaCompile).configureEach { options.release = 17 }

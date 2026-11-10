@@ -1,0 +1,4 @@
+allprojects {
+    group = 'cy'
+    version = '0.2.0'
+}
